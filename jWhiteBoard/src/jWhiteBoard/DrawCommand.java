@@ -18,6 +18,8 @@ public class DrawCommand implements Streamable {
     int x;
     int y;
     int rgb;
+    //khai bao bien iBrush
+    int iBrushsize;
 
     public DrawCommand() { // needed for streamable
     }
@@ -25,34 +27,39 @@ public class DrawCommand implements Streamable {
     DrawCommand(byte mode) {
         this.mode=mode;
     }
-
-    DrawCommand(byte mode, int x, int y, int rgb) {
+// them tham so iBrushSize
+    DrawCommand(byte mode, int x, int y, int rgb,int iBrushsize) {
         this.mode=mode;
         this.x=x;
         this.y=y;
         this.rgb=rgb;
+        this.iBrushsize=iBrushsize;
     }
 
 
+    // de lay gia tri ibrush 
     public void writeTo(DataOutput out) throws Exception {
         out.writeByte(mode);
         out.writeInt(x);
         out.writeInt(y);
         out.writeInt(rgb);
+        out.writeInt(iBrushsize);
+        
     }
-
+// doc  gia tri 
     public void readFrom(DataInput in) throws Exception {
         mode=in.readByte();
         x=in.readInt();
         y=in.readInt();
         rgb=in.readInt();
+        iBrushsize=in.readInt();
     }
 
 
     public String toString() {
         StringBuilder ret=new StringBuilder();
         switch(mode) {
-            case DRAW: ret.append("DRAW(" + x + ", " + y + ") [" + rgb + "]");
+            case DRAW: ret.append("DRAW(" + x + ", " + y + ") [" + rgb + "] ["+iBrushsize+"]");
                 break;
             case CLEAR: ret.append("CLEAR");
                 break;
