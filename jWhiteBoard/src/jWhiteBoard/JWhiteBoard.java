@@ -36,12 +36,13 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener,
 
 	private DrawPanel drawPanel = null;
 	private JLabel lbl = new JLabel("Change Brush Size: ");
-	private JButton clearButton, leaveButton, selectButton;
+	private JButton clearButton, leaveButton, selectButton,selectbackground;
 
 	private final Random random = new Random(System.currentTimeMillis());
 	private final Font defaultFont = new Font("Helvetica", Font.PLAIN, 12);
 	private Color drawColor = selectColor();
-	private static final Color backgroundColor = Color.white;
+	private  Color backgroundColor = selectColor();
+
 	boolean noChannel = false;
 	boolean jmx;
 	private boolean useState = false;
@@ -283,10 +284,9 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener,
 		drawPanel = new DrawPanel(useState);
 		drawPanel.setBackground(backgroundColor);
 		subPanel = new JPanel();
-		
-		
+
 		mainFrame.getContentPane().add("West", drawPanel);
-		
+
 		clearButton = new JButton("Clear");
 		clearButton.setFont(defaultFont);
 		clearButton.addActionListener(this);
@@ -296,38 +296,50 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener,
 		selectButton = new JButton("Select");
 		selectButton.setFont(defaultFont);
 		selectButton.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				Color newColor = JColorChooser.showDialog(null,"Chon mau", Color.red);
-				drawColor=newColor;
-			
+				Color newColor = JColorChooser.showDialog(null, "Chon mau",
+						Color.red);
+				drawColor = newColor;
+
 			}
 		});
-		
-		
+		selectbackground = new JButton("SelectBG");
+		selectbackground.setFont(defaultFont);
+		selectbackground.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				Color newColor = JColorChooser.showDialog(null, "Chon mau",
+						Color.red);
+				backgroundColor = newColor;
+
+			}
+		});
+
 		subPanel.add("South", lbl);
 		subPanel.add("South", cmb);
 		subPanel.add("South", clearButton);
 		subPanel.add("South", leaveButton);
 		subPanel.add("South", selectButton);
-		
+		subPanel.add("South", selectbackground);
 
-	
-		
-		
-	
+
 		mainFrame.getContentPane().add("South", subPanel);
 		mainFrame.setBackground(backgroundColor);
 		clearButton.setForeground(Color.blue);
 		leaveButton.setForeground(Color.blue);
 		selectButton.setForeground(Color.blue);
-		
+		selectbackground.setForeground(Color.blue);
+
+
 		mainFrame.pack();
 		mainFrame.setLocation(15, 25);
 		mainFrame.setBounds(new Rectangle(550, 600));
-		
+
 		if (!noChannel && useState) {
 			channel.connect(groupName, null, stateTimeout);
 		}
@@ -350,13 +362,12 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener,
 			mainFrame.setTitle(title);
 		} else {
 			if (channel.getAddress() != null)
-				//tmp += channel.getAddress() + " " + getGroupName();
-			tmp +=  (" Team 10- Red ") ;
+				// tmp += channel.getAddress() + " " + getGroupName();
+				tmp += (" Team 10- Red ");
 			mainFrame.setTitle(tmp);
 		}
 	}
 
-	
 	void setTitle() {
 		setTitle(null);
 	}
@@ -381,11 +392,12 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener,
 			case DrawCommand.DRAW:
 				if (drawPanel != null)
 					drawPanel.drawPoint(comm);
+				
 				break;
 			case DrawCommand.CLEAR:
 				clearPanel();
 				break;
-			
+
 			default:
 				System.err.println("***** received invalid draw command "
 						+ comm.mode);
@@ -395,9 +407,9 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener,
 			e.printStackTrace();
 		}
 	}
+	
 
 	// Funtion AppendTextMessage
-
 
 	/**
 	 * Execute when new member join or leave Group
@@ -468,6 +480,9 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener,
 
 	}
 
+	
+	
+	
 	/**
 	 * Send Clear command to all members in Group
 	 */
@@ -485,7 +500,6 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener,
 	}
 
 	// send massage Chat
-	
 
 	/**
 	 * Action when click [Clear] or [Leave] button
@@ -501,8 +515,7 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener,
 		} else if ("Leave".equals(command)) {
 			stop();
 		} else if ("Send".equals(command)) {
-			String s=channel.getAddress().toString()+" : ";
-		
+			String s = channel.getAddress().toString() + " : ";
 
 		} else
 			System.out.println("Unknown action");
@@ -534,7 +547,8 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener,
 		for (Point point : copy.keySet()) {
 			// we don't need the color: it is our draw_color anyway
 			DrawCommand comm = new DrawCommand(DrawCommand.DRAW, point.x,
-					point.y, drawColor.getRGB(), Integer.parseInt(cmb.getSelectedItem().toString()));
+					point.y, drawColor.getRGB(), Integer.parseInt(cmb
+							.getSelectedItem().toString()));
 			try {
 				byte[] buf = Util.streamableToByteBuffer(comm);
 				if (use_unicasts)
@@ -709,9 +723,11 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener,
 		 */
 		public void mouseDragged(MouseEvent e) {
 			int x = e.getX(), y = e.getY();
-			//cmb.getSelectedItem().toString() la cai gia tri chon tren combobox de truyen vao iBrush
+			// cmb.getSelectedItem().toString() la cai gia tri chon tren
+			// combobox de truyen vao iBrush
 			DrawCommand comm = new DrawCommand(DrawCommand.DRAW, x, y,
-					drawColor.getRGB(), Integer.parseInt(cmb.getSelectedItem().toString()));
+					drawColor.getRGB(), Integer.parseInt(cmb.getSelectedItem()
+							.toString()));
 			if (noChannel) {
 				drawPoint(comm);
 				return;
@@ -724,7 +740,9 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener,
 					channel.send(new Message(null, null, buf));
 			} catch (Exception ex) {
 				System.err.println(ex);
-			}}
+			}
+		}
+
 		/*
 		 * ------------------- End of MouseMotionListener interface
 		 * ---------------------
@@ -736,13 +754,13 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener,
 		 * adding a pixel to the queue is that repaint() can most often draw
 		 * multiple points at the same time.
 		 */
-		
+
 		public void drawPoint(DrawCommand c) {
 			if (c == null || gr == null)
 				return;
 			Color col = new Color(c.rgb);
 			gr.setColor(col);
-			//c.iBrushsize la cai gia tri ma` ben kia chua do
+			// c.iBrushsize la cai gia tri ma` ben kia chua do
 			gr.fillOval(c.x, c.y, c.iBrushsize, c.iBrushsize);
 			repaint();
 			if (state != null) {
