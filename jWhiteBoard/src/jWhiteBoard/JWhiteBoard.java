@@ -41,7 +41,7 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener,
 	private final Random random = new Random(System.currentTimeMillis());
 	private final Font defaultFont = new Font("Helvetica", Font.PLAIN, 12);
 	private Color drawColor = selectColor();
-	private  Color backgroundColor = selectColor();
+	private  Color backgroundColor = Color.white;
 
 	boolean noChannel = false;
 	boolean jmx;
@@ -50,7 +50,7 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener,
 	private boolean use_unicasts = false;
 	protected boolean send_own_state_on_merge = true;
 	private final List<Address> members = new ArrayList<Address>();
-
+// nut do dau 
 	/**
 	 * Constructor 1
 	 * 
@@ -126,7 +126,9 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener,
 	public String getGroupName() {
 		return groupName;
 	}
-
+	
+		
+	
 	/**
 	 * Set name for Group
 	 * 
@@ -284,9 +286,19 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener,
 		drawPanel = new DrawPanel(useState);
 		drawPanel.setBackground(backgroundColor);
 		subPanel = new JPanel();
-
+		
 		mainFrame.getContentPane().add("West", drawPanel);
-
+		final JTextField txt01 = new JTextField("set group name");
+		JButton btn01 = new JButton("set name");
+		btn01.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				groupName=txt01.getText();
+				setTitle();
+			}
+		});
 		clearButton = new JButton("Clear");
 		clearButton.setFont(defaultFont);
 		clearButton.addActionListener(this);
@@ -294,6 +306,7 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener,
 		leaveButton.setFont(defaultFont);
 		leaveButton.addActionListener(this);
 		selectButton = new JButton("Select");
+		
 		selectButton.setFont(defaultFont);
 		selectButton.addActionListener(new ActionListener() {
 
@@ -313,9 +326,16 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener,
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
+				Point b = mainFrame.getLocation();
 				Color newColor = JColorChooser.showDialog(null, "Chon mau",
 						Color.red);
 				backgroundColor = newColor;
+				try {
+					mainFrame.dispose();
+					go();
+				} catch (Exception e2) {
+					// TODO: handle exception
+				}
 
 			}
 		});
@@ -326,7 +346,8 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener,
 		subPanel.add("South", leaveButton);
 		subPanel.add("South", selectButton);
 		subPanel.add("South", selectbackground);
-
+		subPanel.add("South", btn01);
+		subPanel.add("South", txt01);
 
 		mainFrame.getContentPane().add("South", subPanel);
 		mainFrame.setBackground(backgroundColor);
@@ -334,18 +355,18 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener,
 		leaveButton.setForeground(Color.blue);
 		selectButton.setForeground(Color.blue);
 		selectbackground.setForeground(Color.blue);
-
+		btn01.setForeground(Color.blue);
 
 		mainFrame.pack();
 		mainFrame.setLocation(15, 25);
-		mainFrame.setBounds(new Rectangle(550, 600));
+		mainFrame.setBounds(new Rectangle(680, 660));
 
 		if (!noChannel && useState) {
 			channel.connect(groupName, null, stateTimeout);
 		}
 		mainFrame.setVisible(true);
 	}
-
+	
 	/**
 	 * Set Frame's title
 	 * 
@@ -362,8 +383,8 @@ public class JWhiteBoard extends ReceiverAdapter implements ActionListener,
 			mainFrame.setTitle(title);
 		} else {
 			if (channel.getAddress() != null)
-				// tmp += channel.getAddress() + " " + getGroupName();
-				tmp += (" Team 10- Red ");
+			 //tmp += channel.getAddress() + " " + getGroupName();
+				tmp += (" Team 10- Red "+getGroupName());
 			mainFrame.setTitle(tmp);
 		}
 	}
